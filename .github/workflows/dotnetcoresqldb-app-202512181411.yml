@@ -69,9 +69,20 @@ jobs:
     - name: Run EF
       run: |
         dotnet tool install --global dotnet-ef || echo "Already installed"
-        PROJ_PATH=$(find . -name "*.csproj" -print -quit)
-        echo "Found project at: $PROJ_PATH"
         
+        # 1. Print current directory and list all files to see where we are
+        echo "Current directory: $(pwd)"
+        echo "Listing all files in repository:"
+        find . -maxdepth 3 -not -path '*/.*'
+        
+        # 2. Find the project file
+        PROJ_PATH=$(find . -name "*.csproj" -print -quit)
+        
+        if [ -z "$PROJ_PATH" ]; then
+          echo "ERROR: No .csproj file found in the current directory or subdirectories."
+          exit 1
+        fi
+
         dotnet ef database update \
           --project "$PROJ_PATH" \
           --connection '${{ secrets.DBConnection }}'
