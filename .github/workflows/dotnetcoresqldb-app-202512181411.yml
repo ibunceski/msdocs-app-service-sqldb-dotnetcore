@@ -43,13 +43,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+    # - name: Azure Login
+    #   uses: azure/login@v2
+    #   with:
+    #     client-id: ${{ vars.dotnetcoresqldb_app_202512181411_CLIENT_ID_5783 }}
+    #     tenant-id: ${{ vars.dotnetcoresqldb_app_202512181411_TENANT_ID_5783 }}
+    #     subscription-id: ${{ vars.dotnetcoresqldb_app_202512181411_SUBSCRIPTION_ID_5783 }}
+    #     allow-no-subscriptions: true
     - name: Azure Login
       uses: azure/login@v2
       with:
-        client-id: ${{ vars.dotnetcoresqldb_app_202512181411_CLIENT_ID_5783 }}
-        tenant-id: ${{ vars.dotnetcoresqldb_app_202512181411_TENANT_ID_5783 }}
-        subscription-id: ${{ vars.dotnetcoresqldb_app_202512181411_SUBSCRIPTION_ID_5783 }}
-        allow-no-subscriptions: true
+        creds: '{"clientId":"${{ vars.dotnetcoresqldb_app_202512181411_CLIENT_ID_5783 }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ vars.dotnetcoresqldb_app_202512181411_SUBSCRIPTION_ID_5783 }}","tenantId":"${{ vars.dotnetcoresqldb_app_202512181411_TENANT_ID_5783 }}"}'
     - name: Deploy to containerapp
       uses: azure/CLI@v2
       with:
