@@ -64,18 +64,16 @@ jobs:
           az containerapp update --name ${{ env.CONTAINER_APP_NAME }} --container-name ${{ env.CONTAINER_APP_CONTAINER_NAME }} --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} --image ${{ env.CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
 
     - name: Run EF
+      shell: bash
+      env:
+        # These help the 'Active Directory Default' auth find your login
+        AZURE_CLIENT_ID: ${{ vars.dotnetcoresqldb_app_202512181411_CLIENT_ID_5783 }}
+        AZURE_TENANT_ID: ${{ vars.dotnetcoresqldb_app_202512181411_TENANT_ID_5783 }}
+        AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       run: |
         dotnet tool install --global dotnet-ef || echo "Already installed"
-        dotnet tool restore
-        
-        # Find the project file
         PROJ_PATH=$(find . -name "*.csproj" -print -quit)
-        echo "Found project at: $PROJ_PATH"
-
+        
         dotnet ef database update \
           --project "$PROJ_PATH" \
-          --connection '${{ secrets.DBConnection }}'
-    
-    - name: logout
-      run: |
-        az logout
+          --connection "${{ secrets.DBConnection }}"
