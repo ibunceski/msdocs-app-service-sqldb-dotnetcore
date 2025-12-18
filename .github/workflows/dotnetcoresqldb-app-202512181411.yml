@@ -66,6 +66,7 @@ jobs:
     - name: Run EF
       run: |
         dotnet tool install --global dotnet-ef || echo "Already installed"
+        dotnet tool restore
         
         # Find the project file
         PROJ_PATH=$(find . -name "*.csproj" -print -quit)
