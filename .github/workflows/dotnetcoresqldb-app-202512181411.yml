@@ -39,21 +39,20 @@ jobs:
         if-no-files-found: error
         name: binlog
         path: msbuild.binlog
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
-    # - name: Azure Login
-    #   uses: azure/login@v2
-    #   with:
-    #     client-id: ${{ vars.dotnetcoresqldb_app_202512181411_CLIENT_ID_5783 }}
-    #     tenant-id: ${{ vars.dotnetcoresqldb_app_202512181411_TENANT_ID_5783 }}
-    #     subscription-id: ${{ vars.dotnetcoresqldb_app_202512181411_SUBSCRIPTION_ID_5783 }}
-    #     allow-no-subscriptions: true
+    # IMPORTANT: You must checkout the code in every job that needs access to your files
+    - name: Checkout to the branch
+      uses: actions/checkout@v4
+
     - name: Azure Login
       uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+
     - name: Deploy to containerapp
       uses: azure/CLI@v2
       with:
@@ -63,26 +62,19 @@ jobs:
           az containerapp registry set --name ${{ env.CONTAINER_APP_NAME }} --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} --server ${{ env.CONTAINER_REGISTRY_LOGIN_SERVER }} --username ${{ secrets.DotNetCoreSqlDb20251218141409_USERNAME_5783 }} --password ${{ secrets.DotNetCoreSqlDb20251218141409_PASSWORD_5783 }}
 
           az containerapp update --name ${{ env.CONTAINER_APP_NAME }} --container-name ${{ env.CONTAINER_APP_CONTAINER_NAME }} --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} --image ${{ env.CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
-    - name: logout
-      run: >
-        az logout
+
     - name: Run EF
       run: |
         dotnet tool install --global dotnet-ef || echo "Already installed"
         
-        # 1. Print current directory and list all files to see where we are
-        echo "Current directory: $(pwd)"
-        echo "Listing all files in repository:"
-        find . -maxdepth 3 -not -path '*/.*'
-        
-        # 2. Find the project file
+        # Find the project file
         PROJ_PATH=$(find . -name "*.csproj" -print -quit)
-        
-        if [ -z "$PROJ_PATH" ]; then
-          echo "ERROR: No .csproj file found in the current directory or subdirectories."
-          exit 1
-        fi
+        echo "Found project at: $PROJ_PATH"
 
         dotnet ef database update \
           --project "$PROJ_PATH" \
           --connection '${{ secrets.DBConnection }}'
+    
+    - name: logout
+      run: |
+        az logout
