@@ -72,6 +72,7 @@ jobs:
         AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       run: |
         dotnet tool install --global dotnet-ef || echo "Already installed"
+        dotnet tool restore
         PROJ_PATH=$(find . -name "*.csproj" -print -quit)
         
         dotnet ef database update \
