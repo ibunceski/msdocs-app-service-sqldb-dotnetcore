@@ -3,6 +3,20 @@
     "mssql1": {
       "type": "mssql.local",
       "connectionId": "ConnectionStrings:MyDatabaseContext"
+    },
+    "mssql2": {
+      "secretStore": null,
+      "type": "mssql.local",
+      "connectionId": "ConnectionStrings:MyDbConnection1",
+      "dynamicId": null
+    },
+    "mssql3": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('serviceConnectorResourceGroupName')]/providers/Microsoft.ServiceLinker/locations/westus/connectors/ConnectionStringsMyDbConnection2_71B9EBB9CE",
+      "secretStore": null,
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/dotnetcoresqldbdbserver4321432/databases/DotNetCoreSqlDb_db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:MyDbConnection2",
+      "dynamicId": null
     }
   }
 }
