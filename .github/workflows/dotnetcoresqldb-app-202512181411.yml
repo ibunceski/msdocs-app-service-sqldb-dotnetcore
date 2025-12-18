@@ -70,6 +70,5 @@ jobs:
       run: |
         dotnet tool install --global dotnet-ef || echo "Already installed"
         dotnet ef database update \
-          --project ${{ env.WORKING_DIRECTORY }} \
-          --startup-project ${{ env.WORKING_DIRECTORY }} \
+          --project DotNetCoreSqlDb \
           --connection '${{ secrets.DBConnection }}'
